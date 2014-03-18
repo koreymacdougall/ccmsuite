@@ -1,5 +1,6 @@
-from __future__ import generators
+
 import ccm
+import collections
 
 class ACTR(ccm.ProductionSystem):
     production_time_sd=None
@@ -23,7 +24,7 @@ class ACTR(ccm.ProductionSystem):
                 a=max(activations)
                 
                 threshold=self.production_threshold
-                if callable(threshold): threshold=threshold()
+                if isinstance(threshold, collections.Callable): threshold=threshold()
                 
                 if threshold is not None and a<threshold:
                     for a in self._adaptors: a.below_threshold()
@@ -37,7 +38,7 @@ class ACTR(ccm.ProductionSystem):
                 self.log.production=choice.name
                 
                 t=self.production_time
-                if callable(t): t=t()
+                if isinstance(t, collections.Callable): t=t()
                 if self.production_time_sd is not None:
                     t=t+self.random.gauss(0,self.production_time_sd)
                 t-=self.production_match_delay

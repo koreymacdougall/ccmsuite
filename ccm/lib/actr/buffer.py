@@ -1,6 +1,6 @@
 import ccm
 
-from UserDict import UserDict
+from collections import UserDict
 
 class Chunk(UserDict):
   def __init__(self,contents,bound=None):
@@ -16,7 +16,7 @@ class Chunk(UserDict):
           x=bound[key]
         self[i]=x
     elif hasattr(contents,'__dict__'):  
-      for k,v in contents.__dict__.items():
+      for k,v in list(contents.__dict__.items()):
         if type(v) in [str,float,int,bool]:
           self[k]=v
     else:
@@ -26,7 +26,7 @@ class Chunk(UserDict):
         raise Exception('Unknown contents for chunk:',contents)      
   def __repr__(self):
     r=[]
-    keys=self.keys()
+    keys=list(self.keys())
     i=0
     while i in keys:
       r.append('%s'%self[i])      
@@ -48,7 +48,7 @@ class Buffer(ccm.Model):
     except AttributeError:
       self.chunk=Chunk(chunk,{})  
   def modify(self,**args):
-    for k,v in args.items():
+    for k,v in list(args.items()):
       if k.startswith('_'): k=int(k[1:])
       if k not in self.chunk:
         raise Exception('No slot "%s" to modify to "%s"'%(k,v))
@@ -64,5 +64,6 @@ class Buffer(ccm.Model):
     return id(self)
   def __len__(self):
     if self.chunk is None: return 0
-    return len(self.chunk)  def isEmpty(self):
+    return len(self.chunk)
+  def isEmpty(self):
     return len(self)==0

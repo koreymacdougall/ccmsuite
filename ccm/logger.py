@@ -25,20 +25,20 @@ class Trace:
         self.index=1
         self.type={}
     def add(self,key,value):
-        if not isinstance(value,(bool,int,float,basestring,type(None))):
+        if not isinstance(value,(bool,int,float,str,type(None))):
             value=repr(value)
         if type(value)==str:
             if value.startswith('<'): return
-        if not self.data.has_key(key):
+        if key not in self.data:
             self.data[key]=[]
 
         self.data[key].append((self.index,value))
         self.index+=1
             
     def keys(self):
-        return self.data.keys()
+        return list(self.data.keys())
     def fixed_keys(self):
-        return [k for k,v in self.data.items() if len(v)==1]
+        return [k for k,v in list(self.data.items()) if len(v)==1]
 
     def get_final(self,key):
         return self.data[key][-1][1]
@@ -81,7 +81,7 @@ class Trace:
         if i>=len(d)-1: i=-1
         return d[i][1]
 
-    def __nonzero__(self):
+    def __bool__(self):
         return self.index!=1
 
 
@@ -117,15 +117,15 @@ class Log:
 
     def display_value(self,key,value):
         if key!='time':
-            print '%8.3f %s %s'%(self.time,key,value)
+            print('%8.3f %s %s'%(self.time,key,value))
     def display_all(self):
         if self.time>0:
-            print 'Total time: %8.3f'%self.time
-        items=self.data.items()
+            print('Total time: %8.3f'%self.time)
+        items=list(self.data.items())
         items.sort()
         for k,v in items:
             if k!='time':
-                print ' %s %s'%(k,v)
+                print(' %s %s'%(k,v))
 
     def get_time_code(self):
         t=time.strftime('%Y%m%d-%H%M%S',time.localtime(self.start_time))
@@ -145,7 +145,7 @@ class Log:
 class DummyLog:
   def set(self,key,value):
     pass
-  def __nonzero__(self):
+  def __bool__(self):
     return False
   def __setattr__(self,key,value):
     pass
@@ -194,13 +194,13 @@ class LogProxy:
 
   def _set(self,value):
     try:  
-      if not isinstance(value,(int,float,bool,basestring,tuple,list,dict)):
-        value=`value`
+      if not isinstance(value,(int,float,bool,str,tuple,list,dict)):
+        value=repr(value)
     except TypeError:
-        value=`value`
+        value=repr(value)
     self._log.set(self._prefix,value)  
   
-  def __nonzero__(self):
+  def __bool__(self):
     return True
 
 
@@ -238,7 +238,7 @@ def finished(flush=True):
     if flush or time.time()-log.last_flush>10:
         for fn,data in pending_output:
             f=file(fn,'w')
-            items=data.items()
+            items=list(data.items())
             items.sort()
             for k,v in items:
                 f.write('%s=%s\n'%(k,v))

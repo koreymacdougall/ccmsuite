@@ -1,15 +1,15 @@
-from ui import swi
+from .ui import swi
 import webbrowser
-from ui.pytag import T
-from stats import Stats
-import stats
-import runner
+from .ui.pytag import T
+from .stats import Stats
+from . import stats
+from . import runner
 import os
 import re
 import matplotlib
 matplotlib.use('Agg')
 import pylab
-import StringIO
+import io
 import math
 
 
@@ -69,7 +69,7 @@ def make_settings_table(dir):
             
 def combine_args(args):
     r=[]
-    for k,v in args.items():
+    for k,v in list(args.items()):
         if type(v) is list:
             for vv in v:
                 r.append('%s=%s'%(k,vv))
@@ -105,7 +105,7 @@ class Config:
     ylim=''
     xlim=''
     def __init__(self,keys):
-        for k,v in keys.items():
+        for k,v in list(keys.items()):
             setattr(self,k,v)
 
     def plot_axis_config(self):
@@ -135,7 +135,7 @@ class Config:
     def url_args(self,**keys):
         d=dict(self.__dict__)
         d.update(keys)
-        return '&'.join(['%s=%s'%(k,v) for k,v in d.items() if v!=getattr(self.__class__,k,None) and k[0]!='_'])
+        return '&'.join(['%s=%s'%(k,v) for k,v in list(d.items()) if v!=getattr(self.__class__,k,None) and k[0]!='_'])
 
     def index_bar(self,url,key,max):
         value=int(getattr(self,key))
@@ -392,7 +392,7 @@ class ViewerUI(swi.SimpleWebInterface):
                 
             
         
-        img=StringIO.StringIO()
+        img=io.StringIO()
         dpi=c.dpi
         if type(dpi) is list: dpi=dpi[-1]
         pylab.savefig(img,dpi=int(dpi),format='png')
@@ -424,7 +424,7 @@ class ViewerUI(swi.SimpleWebInterface):
 
             
         
-        img=StringIO.StringIO()
+        img=io.StringIO()
         if type(dpi) is list: dpi=dpi[-1]
         pylab.savefig(img,dpi=int(dpi),format='png')
         return 'image/png',img.getvalue()
@@ -621,7 +621,7 @@ class ViewerUI(swi.SimpleWebInterface):
                 c_ci=pylab.array([c_ci[i] for i in index])
             
             
-            xvalpts=pylab.array(range(len(names)))
+            xvalpts=pylab.array(list(range(len(names))))
             
 
             if len(c_names)>0:
@@ -642,11 +642,11 @@ class ViewerUI(swi.SimpleWebInterface):
             yerr=pylab.array([sample-ci[:,1],ci[:,0]-sample])
             pylab.errorbar(xvalpts,sample,yerr=yerr,ecolor='k',capsize=capsize,linewidth=0,elinewidth=1)
                                     
-            pylab.xticks(range(len(names)),names,rotation=xtickrotation)
+            pylab.xticks(list(range(len(names))),names,rotation=xtickrotation)
             pylab.xlim(-1,len(names))
         elif x is not None and y is None:        
             setting=parse_setting_name(name)
-            xvalpts=pylab.array(range(len(xvals)))
+            xvalpts=pylab.array(list(range(len(xvals))))
 
 
             gfile=open('most_recent_graph.py','w')
@@ -712,8 +712,8 @@ class ViewerUI(swi.SimpleWebInterface):
                 pylab.ylabel(ylabel)
         elif x is not None and y is not None:
             setting=parse_setting_name(name)
-            xvalpts=pylab.array(range(len(xvals)))
-            yvalpts=pylab.array(range(len(yvals)))
+            xvalpts=pylab.array(list(range(len(xvals))))
+            yvalpts=pylab.array(list(range(len(yvals))))
             contour_n=int(contour_n)
             contour_lines=int(contour_lines)
             if len(contour_max)==0: contour_max=None
@@ -744,9 +744,9 @@ class ViewerUI(swi.SimpleWebInterface):
                 pylab.contourf(xvalpts,yvalpts,data,contour_n,antialiased=True,extend='both')
                 cs=pylab.contour(xvalpts,yvalpts,data,contour_lines,colors='k',linewidths=1)
             else:
-                clevels=pylab.array(range(contour_n))*(contour_max-contour_min)/(contour_n-1)+contour_min
+                clevels=pylab.array(list(range(contour_n)))*(contour_max-contour_min)/(contour_n-1)+contour_min
                 pylab.contourf(xvalpts,yvalpts,data,list(clevels),antialiased=True,extend='both')
-                clevels=pylab.array(range(contour_lines))*(contour_max-contour_min)/(contour_lines-1)+contour_min
+                clevels=pylab.array(list(range(contour_lines)))*(contour_max-contour_min)/(contour_lines-1)+contour_min
                 cs=pylab.contour(xvalpts,yvalpts,data,list(clevels),colors='k',linewidths=1)
             pylab.clabel(cs,fmt=contour_fmt)
             
@@ -767,7 +767,7 @@ class ViewerUI(swi.SimpleWebInterface):
 
 
         
-        img=StringIO.StringIO()
+        img=io.StringIO()
         if type(dpi) is list: dpi=dpi[-1]
         pylab.savefig(img,dpi=int(dpi),format='png')
         pylab.close()

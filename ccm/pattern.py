@@ -1,4 +1,5 @@
 import re
+import collections
 
 class PatternException(Exception):
     pass
@@ -20,7 +21,7 @@ def get(obj,name,key):
   except AttributeError:    
       x=getattr(a,key)
   if isinstance(x,float): x='%g'%x    
-  if not isinstance(x,str): x=`x`
+  if not isinstance(x,str): x=repr(x)
   return x
 
 def partialmatch(obj,name,key,b,value):
@@ -71,13 +72,13 @@ def parse(patterns,bound=None):
     funcs=[]
     vars={}
     funcs2=[]
-    for name,pattern in patterns.items():
+    for name,pattern in list(patterns.items()):
         if not isinstance(pattern,(list,tuple)): pattern=[pattern]
         for p in pattern:
             if p is None:
                 if name is None: funcs.append(lambda x,b: x==None)
                 else:            funcs.append(lambda x,b,name=name: x[name]==None or len(x[name])==0)
-            elif callable(p):
+            elif isinstance(p, collections.Callable):
                 if name is None:
                   def callfunc(x,b,name=name,p=p):
                     return p(x,b)
@@ -85,7 +86,7 @@ def parse(patterns,bound=None):
                   def callfunc(x,b,name=name,p=p):
                     return p(x[name],b)
                 funcs2.append(callfunc)        
-            elif isinstance(p,basestring):
+            elif isinstance(p,str):
                 namedSlots=False
                 for j,text in enumerate(p.split()):
                     key=j

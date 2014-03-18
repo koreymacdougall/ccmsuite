@@ -23,12 +23,12 @@ class Count(ACTR):
 
   def increment(goal='countFrom ?x !?x counting',
                 retrieve='count ?x ?next'):
-    print x
+    print(x)
     memory.request('count ?next ?nextNext')
     goal.modify(_1=next)
 
   def stop(goal='countFrom ?x ?x counting'):
-    print x
+    print(x)
     goal.set('countFrom ?x ?x stop')
 
 model=Count()

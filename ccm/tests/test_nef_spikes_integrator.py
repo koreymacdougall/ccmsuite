@@ -20,7 +20,7 @@ class TestNEF(unittest.TestCase):
         t=numpy.arange(1000)*n1.dt
         input=numpy.cos(3.1415*t*2)
         vv=[]
-        for i in xrange(1000):
+        for i in range(1000):
             n0.set(input[i])
             n1.tick()
             vv.append(n2.value())

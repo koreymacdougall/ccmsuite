@@ -39,27 +39,27 @@ For further documentation, see http://terrystewart.ca/swi.html
 - 2005-04-03: Initial Release
 """
 
-import BaseHTTPServer
+import http.server
 import traceback
-import random,string,os,StringIO,mimetools,multifile
+import random,string,os,io,mimetools,multifile
 import re
-import webbrowser,thread
+import webbrowser,_thread
 import mimetypes
 
-import SocketServer
-class HTTPServer(SocketServer.ThreadingMixIn,BaseHTTPServer.HTTPServer):
+import socketserver
+class HTTPServer(socketserver.ThreadingMixIn,http.server.HTTPServer):
   pass
 
 
 testingUser=None
 
 def makeDBFromMultipart(data):
-  print 1,`data`
+  print(1,repr(data))
   db={}
   boundary=data[:data.find('\n')+1].strip()
   n=len(boundary)
   
-  print 'boundary',`boundary`
+  print('boundary',repr(boundary))
 
   i=0
   while 1:
@@ -81,7 +81,7 @@ def makeDBFromMultipart(data):
     db[name]=val
 
     i=j
-  print db
+  print(db)
   return db
 
 
@@ -122,7 +122,7 @@ passwords={}
 def addUser(id,pwd):
   passwords[id]=pwd
 
-class SimpleWebInterface(BaseHTTPServer.BaseHTTPRequestHandler):
+class SimpleWebInterface(http.server.BaseHTTPRequestHandler):
   server_version='SimpleWebInterface/1.0'
   serveFiles=[]
   serveDirs=[]
@@ -142,7 +142,7 @@ class SimpleWebInterface(BaseHTTPServer.BaseHTTPRequestHandler):
       return id
     return None
   def getUserFromCookie(self):
-    if self.headers.has_key('cookie'):
+    if 'cookie' in self.headers:
       cookie=self.headers['cookie']
       for c in cookie.split(';'):
         if '=' in c:
@@ -154,7 +154,7 @@ class SimpleWebInterface(BaseHTTPServer.BaseHTTPRequestHandler):
     if testingUser!=None: return testingUser
     return None
   def logOut(self):
-    for k,v in currentCookies.items():
+    for k,v in list(currentCookies.items()):
       if v==self.user:
         del currentCookies[k]
     self.addHeader('Set-Cookie:','id=0')
@@ -163,7 +163,7 @@ class SimpleWebInterface(BaseHTTPServer.BaseHTTPRequestHandler):
       message='Invalid password.  Try again.'
     else:
       message='Enter your user name and password:'
-    data=''.join(['<input type=hidden name=%s value=%s>'%kv for kv in data.items() if kv[1]!=None])
+    data=''.join(['<input type=hidden name=%s value=%s>'%kv for kv in list(data.items()) if kv[1]!=None])
 
     if target==None:
       target=self.currentArgs[0]
@@ -171,7 +171,7 @@ class SimpleWebInterface(BaseHTTPServer.BaseHTTPRequestHandler):
     # for some reason, using POST here doesn't work under IE6, but does
     #  under Firefox and Safari.
     method='GET'
-    if self.headers.has_key('User-Agent'):
+    if 'User-Agent' in self.headers:
       agent=self.headers['User-Agent']
       if 'MSIE' not in agent: method='POST'
 
@@ -199,8 +199,8 @@ class SimpleWebInterface(BaseHTTPServer.BaseHTTPRequestHandler):
       db2=makeDBFromLine(data)
       db.update(db2)
       
-    print self.path  
-    print db
+    print(self.path)  
+    print(db)
 
 
     if self.path=='': self.path='/'
@@ -246,13 +246,13 @@ class SimpleWebInterface(BaseHTTPServer.BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header('Content-type','text/html')
         self.end_headers()
-        print >>self.wfile,"<html><body><pre>"
-        text=StringIO.StringIO()
+        print("<html><body><pre>", file=self.wfile)
+        text=io.StringIO()
         traceback.print_exc(file=text)
         text=text.getvalue()
         text=text.replace('<','<')
         text=text.replace('>','>')
-        print >>self.wfile,"%s</pre></body></html>"%text
+        print("%s</pre></body></html>"%text, file=self.wfile)
       else:
         if type(text)==type(()):
           ctype,text=text
@@ -261,14 +261,14 @@ class SimpleWebInterface(BaseHTTPServer.BaseHTTPRequestHandler):
         for k,v in self.pendingHeaders:
           self.send_header(k,v)
         self.end_headers()
-        print >>self.wfile,text
+        print(text, file=self.wfile)
     elif self.path[1:] in self.serveFiles:
       self.sendFile(self.path[1:])
     elif self.path=='/robots.txt':
       self.send_response(200)
       self.send_header('Content-type','text/text')
       self.end_headers()
-      print >>self.wfile,"User-agent: *\nDisallow: /"
+      print("User-agent: *\nDisallow: /", file=self.wfile)
     else:
       for d in self.serveDirs:
         if self.path[1:].startswith(d+'/'):
@@ -277,14 +277,14 @@ class SimpleWebInterface(BaseHTTPServer.BaseHTTPRequestHandler):
       self.send_response(200)
       self.send_header('Content-type','text/html')
       self.end_headers()
-      print >>self.wfile,"<html><body>Invalid request:<pre>args=%s</pre><pre>db=%s</pre></body></html>"%(args,db)
+      print("<html><body>Invalid request:<pre>args=%s</pre><pre>db=%s</pre></body></html>"%(args,db), file=self.wfile)
   def sendFile(self,path):
     self.send_response(200)
     type,enc=mimetypes.guess_type(path)
     self.send_header('Content-type',type)
     self.send_header('Content-encoding',enc)
     self.end_headers()
-    print >>self.wfile,file(path,'rb').read()
+    print(file(path,'rb').read(), file=self.wfile)
 
 
 
@@ -293,11 +293,11 @@ def start(klass,port=80,asynch=True):
   if asynch:
     server=HTTPServer(('',port),klass)
   else:
-    server=BaseHTTPServer.HTTPServer(('',port),klass)
+    server=http.server.HTTPServer(('',port),klass)
   server.serve_forever()
 
 def browser(port=80):
-  thread.start_new_thread(webbrowser.open,('http://127.0.0.1:%d'%port,))
+  _thread.start_new_thread(webbrowser.open,('http://127.0.0.1:%d'%port,))
 
 
 if __name__=='__main__':

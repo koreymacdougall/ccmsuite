@@ -1,4 +1,4 @@
-import grid
+from . import grid
 
 class Body(grid.Body):
     def go_in_direction(self, dir, distance=1):

@@ -27,7 +27,7 @@ class ExpertCountingModel(ACTR):
         goal.modify(current='ten')        
         
     def countFinished(goal='action:counting current:?x target:?x'):
-        print 'Finished counting to',x
+        print('Finished counting to',x)
         goal.clear()
         
         

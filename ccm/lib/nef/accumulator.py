@@ -29,10 +29,10 @@ class Accumulator:
             self.accs[tau]=acc
         acc.add(value,dt)
     def tick(self,dt):
-        for a in self.accs.values(): a.tick(dt)
+        for a in list(self.accs.values()): a.tick(dt)
     def value(self):
         v=None
-        for a in self.accs.values():
+        for a in list(self.accs.values()):
             if v is None: v=numpy.array(a.value)
             else: v+=a.value
         if v is None: v=numpy.zeros(self.dimensions)

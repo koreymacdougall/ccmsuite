@@ -28,7 +28,7 @@ class ExpertCountingModel(ACTR):
         imaginal.set('number:ten')        
         
     def countFinished(goal='action:counting target:?x',imaginal='number:?x'):
-        print 'Finished counting to',x
+        print('Finished counting to',x)
         goal.clear()
         
         

@@ -48,11 +48,9 @@ class Model:
     name='top'
     
     def __init__(self,log=None,**keys):
-        
+	print("here...!!!")
         self.__init_log=log
-        
         for k,v in list(keys.items()):
-          print(k,v)
           setattr(self,k,v)
     
     def __convert(self,parent=None,name=None):

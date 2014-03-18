@@ -43,7 +43,7 @@ class Cell(grid.Cell):
 
 class Agent(grid.Body):
     def __init__(self):
-        self.ai=qlearn.QLearn(actions=range(directions),epsilon=0.1,alpha=0.1,gamma=0.9)
+        self.ai=qlearn.QLearn(actions=list(range(directions)),epsilon=0.1,alpha=0.1,gamma=0.9)
         self.last_action=None
         self.score=0
     def color(self):

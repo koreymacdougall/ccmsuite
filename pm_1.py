@@ -13,8 +13,9 @@ class MyModel(ACTR):
         
 # run the model        
 model=MyModel()
+print(model)
 ccm.log_everything(model)
-model.goal.set('action:greet')
+#model.goal.set('action:greet')
 model.run()
 
 

@@ -4,7 +4,7 @@ from ccm.pattern import Pattern,PatternException
 
 class Obj:
   def __init__(self,**keys):
-    for k,v in keys.items():
+    for k,v in list(keys.items()):
       self.__dict__[k]=v
       
       

@@ -1,8 +1,9 @@
-from __future__ import generators
+
 import ccm
 import math
 
 from ccm.lib.actr.buffer import Chunk
+import collections
 
 
 class ImaginalModule(ccm.Model):
@@ -15,7 +16,7 @@ class ImaginalModule(ccm.Model):
 
   def delay_time(self):
       t=self.delay
-      if callable(t): t=t()
+      if isinstance(t, collections.Callable): t=t()
       if self.delay_sd is not None:
           t=math.gauss(t,self.delay_sd)
       return t

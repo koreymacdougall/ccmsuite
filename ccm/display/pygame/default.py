@@ -1,8 +1,9 @@
 import pygame
+import collections
 
 def get_value(obj,attr,default=None):
     x=getattr(obj,attr,default)
-    if callable(x): x=x()
+    if isinstance(x, collections.Callable): x=x()
     return x
 
 class DefaultRenderer:

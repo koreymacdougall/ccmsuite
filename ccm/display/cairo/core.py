@@ -265,7 +265,7 @@ class CairoDisplay(gtk.DrawingArea):
         elif key=='Escape':
             self.obj.stop()    
         else:
-            print 'key',key    
+            print('key',key)    
             if hasattr(self.obj,'key_pressed'):
                 self.obj.key_pressed(key)
             return False    

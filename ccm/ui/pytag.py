@@ -125,7 +125,7 @@ class Tag:
     if self.locked: 
       self=copy.deepcopy(self)
       self.locked=False
-    for k,v in attr.items():
+    for k,v in list(attr.items()):
       v=str(v)
       v='"%s"'%v
       self.attr[k]=v
@@ -133,11 +133,11 @@ class Tag:
   def __str__(self):
     attr=''
     if len(self.attr)>0:
-      attr=' '+' '.join(['%s=%s'%kv for kv in self.attr.items()])
+      attr=' '+' '.join(['%s=%s'%kv for kv in list(self.attr.items())])
     if len(self.content)==0:
       return '<%s%s />'%(self.name,attr)
     else:
-      content=''.join([unicode(x) for x in self.content])
+      content=''.join([str(x) for x in self.content])
       return '<%s%s>%s</%s>'%(self.name,attr,content,self.name)
 
 class _TagMaker:
@@ -157,11 +157,11 @@ for t in _tagList:
 
 
 def _pytagtest():
-  print p['Hello world']
+  print(p['Hello world'])
 
-  print body[T.p['Hello']]
+  print(body[T.p['Hello']])
 
-  print html[
+  print(html[
     head[T.title["This is the title"]],
     body[
       h1["Heading"],
@@ -173,13 +173,13 @@ def _pytagtest():
       br,
       "Click ",a(href="page.html")['here']," to go somewhere else."
       ]
-    ]
+    ])
 
-  print ol[[li[x] for x in range(10)]]
+  print(ol[[li[x] for x in range(10)]])
 
   cp=p(align='center')
   cp.lock()
-  print p[cp(a='b')['p 1'],cp['p 2']]
+  print(p[cp(a='b')['p 1'],cp['p 2']])
 
 
 

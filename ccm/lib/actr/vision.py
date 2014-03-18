@@ -34,7 +34,7 @@ class Vision(ccm.Model):
       r=[]
       for o in self.parent.parent.get_children():
         if not getattr(o,'visible',True):
-            if o in self.timeAppeared.keys(): del self.timeAppeared[o] 
+            if o in list(self.timeAppeared.keys()): del self.timeAppeared[o] 
             continue
         if o not in self.timeAppeared:
           if hasattr(o,'x') and hasattr(o,'y'):  

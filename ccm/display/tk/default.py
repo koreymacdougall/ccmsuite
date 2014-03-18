@@ -1,8 +1,9 @@
-import Tkinter
+import tkinter
+import collections
 
 def get_value(obj,attr,default=None):
     x=getattr(obj,attr,default)
-    if callable(x): x=x()
+    if isinstance(x, collections.Callable): x=x()
     return x
 
 class DefaultRenderer:
@@ -84,8 +85,8 @@ class DefaultRenderer:
                         from PIL import Image, ImageTk
                         self.img=ImageTk.PhotoImage(Image.open(image))
                     else:    
-                        self.img=Tkinter.PhotoImage(file=image)
-                    self.image_widget=canvas.create_image(x,y,image=self.img,anchor=Tkinter.CENTER)    
+                        self.img=tkinter.PhotoImage(file=image)
+                    self.image_widget=canvas.create_image(x,y,image=self.img,anchor=tkinter.CENTER)    
                     canvas.tag_lower(self.image_widget)
                 self.image=image    
         

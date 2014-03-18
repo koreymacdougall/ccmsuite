@@ -1,4 +1,4 @@
-import Tkinter
+import tkinter
 import time
 from ccm.display.tk import render
 
@@ -7,7 +7,7 @@ class TkinterDisplay:
 
     def get_root(self):
         if TkinterDisplay.root is None:
-            TkinterDisplay.root=Tkinter.Tk()
+            TkinterDisplay.root=tkinter.Tk()
         return TkinterDisplay.root
             
     def __init__(self,obj,width=640,height=480,full=False,title='CCMSuite',background='#CCCCCC'):
@@ -24,7 +24,7 @@ class TkinterDisplay:
             root.overrideredirect(1)
             root.geometry("%dx%d+0+0" % (width, height))        
         
-        self.canvas=Tkinter.Canvas(root)
+        self.canvas=tkinter.Canvas(root)
         self.canvas.configure(width=width,height=height,background=background)
         self.canvas.pack()
 

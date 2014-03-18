@@ -1,4 +1,4 @@
-from __future__ import generators
+
 import ccm
 
 class Timer(ccm.Model):

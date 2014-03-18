@@ -175,6 +175,6 @@ def doTest(high,prob,low,medium):
         p.append(e.p)
     return sum(p)/len(p)
 
-print doTest(high=10,prob=0.5,low=1,medium=2)
+print(doTest(high=10,prob=0.5,low=1,medium=2))
         
         

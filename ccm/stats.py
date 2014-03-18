@@ -2,7 +2,7 @@ import shelve
 import os
 
 import numpy
-from bootstrapci import bootstrapci                
+from .bootstrapci import bootstrapci                
 
 statistics={
     'mean':numpy.mean,
@@ -26,7 +26,7 @@ class Summary:
         if code not in self.data:
             if stat in statistics:            
                 raw=self.stats.get_raw(self.measure)
-                skeys=statistics.keys()
+                skeys=list(statistics.keys())
                 cis=bootstrapci(raw,[statistics[k] for k in skeys],n=bootstrap_samples,p=confidence)
                 for i in range(len(skeys)):
                     self.data[(skeys[i],bootstrap_samples,confidence)]=cis[i]
@@ -93,15 +93,15 @@ class Stats:
         new=self.load_from_name(name)
         new['_name']=name
         
-        keys=self.raw.keys()
+        keys=list(self.raw.keys())
         
-        for k in new.keys():            
+        for k in list(new.keys()):            
             if k not in keys: 
                 if self.N==0: self.raw[k]=[]
                 self.raw[k]=[None]*self.N
         for k in keys:
             if k not in new: new[k]=None
-        for k in new.keys():
+        for k in list(new.keys()):
             v=self.raw[k]
             v.append(new[k])
             self.raw[k]=v
@@ -110,7 +110,7 @@ class Stats:
         self.summary['_name']=self.raw['_name']
         self.N=len(self.raw['_name'])
         self.summary['_N']=self.N
-        self.summary['_measures']=[k for k in self.raw.keys() if k[0]!='_']
+        self.summary['_measures']=[k for k in list(self.raw.keys()) if k[0]!='_']
     
     def load_from_name(self,name):
         fn='%s/%s'%(self.dir,name)
@@ -131,7 +131,7 @@ class Stats:
         
     
     def measure(self,m):
-        if not self.summary.has_key(m):        
+        if m not in self.summary:        
             self.summary[m]={}
         return Summary(self.summary[m],self,m)    
             

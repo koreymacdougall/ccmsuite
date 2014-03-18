@@ -42,7 +42,7 @@ class CCMBaseNode(Node,Probeable):
         pass
 
     def getOrigins(self):
-        return self._origins.values()
+        return list(self._origins.values())
     def getOrigin(self,name):
         return self._origins[name]
     def addOrigin(self,origin):
@@ -50,7 +50,7 @@ class CCMBaseNode(Node,Probeable):
         self._states.setProperty(origin.name,"CCMSuite data")
 
     def getTerminations(self):
-        return self._terminations.values()
+        return list(self._terminations.values())
     def getTermination(self,name):
         return self._terminations[name]
     def addTermination(self,termination):
@@ -203,7 +203,7 @@ class CCMNode(CCMBaseNode):
         if len(self._terminations)>0:
             #self._integrator.run(start,end)
             value=0
-            for t in self._terminations.values():
+            for t in list(self._terminations.values()):
                 value+=t.getOutput()
             setattr(v,self._path[-1],value)
         else:
@@ -242,17 +242,17 @@ class ModelNetwork(NetworkImpl):
     def run(self,start,end):
         model=self._simulator.model
         for p in self._path: model=getattr(model,p)        
-        for (trans,origin) in self._translatedOrigins.values():
+        for (trans,origin) in list(self._translatedOrigins.values()):
             origin.setValues(start,end,trans.convertToVector(model))
         NetworkImpl.run(self,start,end)
-        for (trans,termination) in self._translatedTerminations.values():
+        for (trans,termination) in list(self._translatedTerminations.values()):
             trans.applyVector(model,termination.getOutput())
                 
         
 
     def listStates(self):
         states=NetworkImpl.listStates(self)
-        for name in self._translatedOrigins.keys():
+        for name in list(self._translatedOrigins.keys()):
             states.setProperty(name,"translated model")
         return states
 
@@ -282,7 +282,7 @@ class CCMModelNetwork(NetworkImpl):
     def build(self,network,model=None,path=[]):
         if model is None:
             model=self._simulator.model
-        for k,v in model.__dict__.items():
+        for k,v in list(model.__dict__.items()):
             if k[0]=='_': continue
             if isinstance(v,(int,float)):
                 node=CCMNode(name=k,simulator=self.simulator,path=path+[k])

@@ -37,7 +37,7 @@ class Storage:
     def get(self,key,shape):
         try:
             array=numpy.fromfile(self.path(key),dtype='float32')
-        except IOError,e:
+        except IOError as e:
             return None
         try:
             if shape[1]==-1:

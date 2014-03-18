@@ -1,6 +1,6 @@
 import ccm
 
-import cellular
+from . import cellular
 
 Cell = cellular.Cell
 
@@ -40,7 +40,7 @@ def list_pts(x0, y0, x1, y1):
         y0, y1 = y1, y0
     deltax = x1 - x0
     if deltax == 0:
-        for y in xrange(y0, y1):
+        for y in range(y0, y1):
             if steep:
                 yield (y, x0)
             else:
@@ -55,7 +55,7 @@ def list_pts(x0, y0, x1, y1):
         ystep = 1
     else:
         ystep = -1
-    for x in xrange(x0, x1 + 1):
+    for x in range(x0, x1 + 1):
         if steep:
             yield (y, x)
         else:

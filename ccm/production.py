@@ -1,9 +1,9 @@
-from __future__ import generators
 
-import model
+
+from . import model
 import inspect
 import re
-import pattern
+from . import pattern
 
 try:
     Set=set
@@ -46,7 +46,7 @@ class Production:
     
     def fire(self,context):
         self.system.sch.bound=self.bound
-        exec self.func in context,self.bound
+        exec(self.func, context,self.bound)
             
       
 class ProductionSystem(model.Model):
@@ -57,7 +57,7 @@ class ProductionSystem(model.Model):
         self._productions=[]
         self._initializers=[]
         self._keys_used=Set()
-        for k,v in methods.items():
+        for k,v in list(methods.items()):
             a,va,hk,d=inspect.getargspec(v)
             if va is None and hk is None:
               if d is None and len(a)==0:
@@ -76,7 +76,7 @@ class ProductionSystem(model.Model):
         if len(keys)==0: top=self
         m=self
         while m is not None:
-            for k,v in m.__dict__.items():
+            for k,v in list(m.__dict__.items()):
                 if k not in context and k[0]!='_' and k!='parent' and isinstance(v,object) and not isinstance(v,model.MethodWrapper):
                     context[k]=v
                     if k in keys: 

@@ -55,7 +55,7 @@ def makeHeader(table,keys):
     
     row=tr()
     for j in range(len(merged)):
-      row[th(colspan=`merged[j]`)[values[j]]]
+      row[th(colspan=repr(merged[j]))[values[j]]]
     table[row]  
           
       
@@ -200,12 +200,12 @@ class HTMLTrace:
               c,bg=self.getColor(val)
 
           style='background:%s; color:%s;'%(bg,c)
-          row[td(rowspan=`len(grouped[k][0])`,style=style)[val]]
+          row[td(rowspan=repr(len(grouped[k][0])),style=style)[val]]
       table[row]  
         
     
   def generate(self,filename):
-    keys=self.trace.keys()
+    keys=list(self.trace.keys())
     fixed_keys=self.trace.fixed_keys()
     fixed_keys.sort()
     keys=[k for k in keys if k not in fixed_keys]
@@ -251,6 +251,6 @@ class HTMLTrace:
              ]
            ]  
     
-    print>>f,page
+    print(page, file=f)
     
     

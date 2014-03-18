@@ -28,7 +28,7 @@ class Addition(ACTR):
     memory.request('addfact ?ten1 ?ten2 ?')
     
   def addTensDone(goal='add ? ? ? ? busy?tenAns ?oneAns 0',retrieve='addfact ? ? ?sum'):
-    print sum,oneAns
+    print(sum,oneAns)
     goal.modify(_5=sum)
   def addTensCarry(goal='add ? ? ? ? busy?tenAns ? 1?carry',retrieve='addfact ? ? ?sum'):
     goal.modify(_7=0)

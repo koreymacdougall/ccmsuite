@@ -39,29 +39,8 @@ class Event:
     self.group=()
     self.cancelled=False
     self.parent=None
-  #def __cmp__(self,other):
-    #return cmp((self.time,-self.priority),(other.time,-other.priority))
-  
-  def __lt__(self,other):
-    #print(self.time,-self.priority,'other',other.time,-other.priority)
-    return (self.time,-self.priority) < (other.time,-other.priority)
-    #return cmp((self.time,-self.priority),(other.time,-other.priority))
-
-  def __le__(self, other):
+  def __cmp__(self,other):
     return cmp((self.time,-self.priority),(other.time,-other.priority))
-
-  def __eq__(self,other):
-    return cmp((self.time,-self.priority),(other.time,-other.priority))
-
-  def __ge__(self, other):
-    return cmp((self.time,-self.priority),(other.time,-other.priority))
-  
-  def __gt__(self,other):
-    return cmp((self.time,-self.priority),(other.time,-other.priority))
-
-  def __ne__(self, other):
-    return cmp((self.time,-self.priority),(other.time,-other.priority))  
-
   def __repr__(self):
     return '<%s %x %5.3f>'%(self.name,id(self.func),self.time)
     

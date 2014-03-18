@@ -1,5 +1,7 @@
-import Tkinter
+import tkinter
 import math
+import collections
+from functools import reduce
 
 class CellularRenderer:
     def __init__(self,world,canvas):
@@ -26,16 +28,16 @@ class CellularRenderer:
                 x,y=cx+i*size,cy+j*size
                 if world.directions==6 and j%2==1: x+=size/2
                 color=world.grid[j][i].color
-                if callable(color): color=color()
+                if isinstance(color, collections.Callable): color=color()
                 sq=canvas.create_rectangle((x,y,x+size,y+size),fill=color,width=0)
                 self.squares[(i,j)]=(sq,color)
         self.render(canvas)
 
     def render(self,canvas):
         world=self.world
-        for (i,j),(sq,c) in self.squares.items():
+        for (i,j),(sq,c) in list(self.squares.items()):
                 color=world.grid[j][i].color
-                if callable(color): color=color()
+                if isinstance(color, collections.Callable): color=color()
                 if c!=color:
                     canvas.itemconfig(sq,fill=color)
                     self.squares[(i,j)]=(sq,color)
@@ -43,7 +45,7 @@ class CellularRenderer:
         for a in world.agents:
             try:
                 color=a.color
-                if callable(color): color=color()
+                if isinstance(color, collections.Callable): color=color()
             except AttributeError:
                 a.color='magenta'
                 color=a.color
@@ -109,7 +111,7 @@ class CellularRenderer:
         if self.world.directions==6 and y%2==1:
             xpts=tuple(xx+size/4 for xx in xpts)
 
-        pts=zip(xpts,ypts)
+        pts=list(zip(xpts,ypts))
         pts=reduce(lambda a,b:a+b,pts)
         return pts
             

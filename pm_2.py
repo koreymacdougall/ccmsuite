@@ -20,7 +20,7 @@ class MyModel(ACTR):
 # run the model        
 model=MyModel()
 ccm.log_everything(model)
-model.goal.set('action:greet style:formal person:Terry')
+#model.goal.set('action:greet style:formal person:Terry')
 model.run()
 
 

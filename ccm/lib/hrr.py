@@ -168,7 +168,7 @@ class Vocabulary:
     def text(self,v):
         matches=[]
         
-        names=self.hrr.keys()
+        names=list(self.hrr.keys())
         names.sort()
         names.remove('I')
 

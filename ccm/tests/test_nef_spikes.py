@@ -70,7 +70,7 @@ class TestNEF(unittest.TestCase):
         N=2000
         for i in range(N):
             b.tick()
-            if i%100==99: print (i+1),c.value()
+            if i%100==99: print((i+1),c.value())
         self.assertAlmostEqual(a.value(),c.value(),1)
         self.assertAlmostEqual(a.value(),c.value(),1)
 

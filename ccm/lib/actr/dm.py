@@ -1,4 +1,4 @@
-from __future__ import generators
+
 import ccm
 import math
 
@@ -291,7 +291,7 @@ class DMSalience(MemorySubModule):
   def weights(self,**weights):
     self.histogram={}
     self.weight={}
-    for k,v in weights.items():
+    for k,v in list(weights.items()):
       if k.startswith('_'): k=int(k[1:])
       self.weight[k]=float(v)
       self.histogram[k]={}
@@ -299,19 +299,19 @@ class DMSalience(MemorySubModule):
   def context(self,pattern):
     pat=Pattern(pattern)
     chunks=[x for x in self.memory.dm if pat.match(x) is not None]
-    for k,hist in self.histogram.items():
+    for k,hist in list(self.histogram.items()):
       hist.clear()
     if len(chunks)==0: raise Exception('No chunks match salience pattern: "%s"'%pattern)
     dw=1.0/len(chunks)
     for c in chunks:
-      for k,hist in self.histogram.items():
+      for k,hist in list(self.histogram.items()):
         val=c.get(k,None)
         if val not in hist: hist[val]=dw
         else: hist[val]+=dw
         
   def activation(self,chunk):
     act=0.0
-    for k,hist in self.histogram.items():
+    for k,hist in list(self.histogram.items()):
       val=chunk.get(k,None)
       p=hist[val]
       w=self.weight[k]
@@ -331,20 +331,20 @@ class DMSpreading(MemorySubModule):
     self.slots={}
     
   def create(self,chunk,**keys):
-    for slot in chunk.values():
+    for slot in list(chunk.values()):
       if slot in self.slots:
         self.slots[slot].append(chunk)
       else:
         self.slots[slot]=[chunk]
   def activation(self,chunk):
-    values=chunk.values()
+    values=list(chunk.values())
   
     total=0.0
     for b in self.buffers:
      ch=b.chunk 
      if ch is not None:
       w=self.weight[b]
-      for key,slot in ch.items():
+      for key,slot in list(ch.items()):
         if slot in values:
           s=self.strength-math.log(len(self.slots[slot])+1)
           total+=w*s
@@ -386,8 +386,8 @@ class DMAssociate(MemorySubModule):
   def recalled(self,chunk):
     prechunk=self._buffer.chunk
     if prechunk is None: return
-    for pk,pv in prechunk.items():
-      for k,v in chunk.items():
+    for pk,pv in list(prechunk.items()):
+      for k,v in list(chunk.items()):
         c=self._mem.get((pv,v),None)
         if c==None:
           c=Associated(pv,v)
@@ -399,8 +399,8 @@ class DMAssociate(MemorySubModule):
     act=0
     prechunk=self._buffer.chunk
     if prechunk is None: return 0
-    for pk,pv in prechunk.items():
-      for k,v in chunk.items():
+    for pk,pv in list(prechunk.items()):
+      for k,v in list(chunk.items()):
         c=self._mem.get((pv,v),None)
         if c is not None:         
           act+=self._bl.activation(c)

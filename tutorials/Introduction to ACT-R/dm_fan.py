@@ -34,17 +34,17 @@ class FanModel(ACTR):
     
   def respond_yes(goal='recall ?person ?location',
                   retrieval='?person in ?location'):
-    print 'yes'
+    print('yes')
     goal.clear()
 
   def respond_no_person(goal='recall ?person ?location',
                         retrieval='? in !?location'):
-    print 'no'
+    print('no')
     goal.clear()
 
   def respond_no_location(goal='recall ?person ?location',
                         retrieval='!?person in ?'):
-    print 'no'
+    print('no')
     goal.clear()
 
 

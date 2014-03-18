@@ -1,6 +1,6 @@
-from __future__ import generators
 
-import logger
+
+from . import logger
 
 import os
 import random
@@ -62,12 +62,12 @@ def make_param_text(params,defaults,settings):
 
 def fix_setting(v):
     if not isinstance(v,(int,float)): 
-        v=`v`
+        v=repr(v)
     return v
 
 
 def make_settings_combinations(settings,keys=None):
-    if keys is None: keys=settings.keys()
+    if keys is None: keys=list(settings.keys())
     if len(keys)==0: 
         yield {}
         return
@@ -125,7 +125,7 @@ def run(_filename,_iterations=1,**settings):
     f=None
     fname='.ccmtmp%08x.py'%random.randrange(0,0x70000000)
 
-    for i in xrange(_iterations):
+    for i in range(_iterations):
       for setting in make_settings_combinations(settings):
         param_code=make_param_code(params,defaults,setting)
         param_text=make_param_text(params,defaults,setting)
@@ -138,7 +138,7 @@ def run(_filename,_iterations=1,**settings):
         logline='ccm.log(data=True,screen=False,directory="%s/%s")'%(_filename[:-3],param_text)
         code=re.sub(r'ccm\.log\([^)]*\)',logline,code)
                 
-        print _filename,'%d/%d'%(i,_iterations),param_text
+        print(_filename,'%d/%d'%(i,_iterations),param_text)
         
         f=file(fname,'w')
         f.write(code)
@@ -146,7 +146,7 @@ def run(_filename,_iterations=1,**settings):
         
         if run_external is None:
             compiled=compile(code,fname,'exec')
-            exec compiled in {}
+            exec(compiled, {})
             logger.finished()
         else:
             os.system('%s %s'%(run_external,fname))    

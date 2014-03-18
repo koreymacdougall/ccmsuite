@@ -1,4 +1,5 @@
 import numpy
+import collections
 
 
 array_class=numpy.array(0).__class__
@@ -66,7 +67,7 @@ class Connection:
 
         
 def connect(x,y,func=None,weight=None,tau=None):
-    if func is not None and not callable(func):
-        print func
+    if func is not None and not isinstance(func, collections.Callable):
+        print(func)
         raise Exception('connection function is invalid')
     return Connection(x,y,func=func,weight=weight,tau=tau)

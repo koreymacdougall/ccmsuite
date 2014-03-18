@@ -143,7 +143,7 @@ class LossAversion:
    
     
   def getBest(self,guess):
-    o1,o2=guess.keys()
+    o1,o2=list(guess.keys())
     v1,v2=guess[o1],guess[o2]
     if v1>v2: return o1
     else: return o2
@@ -155,8 +155,8 @@ class LossAversion:
     guess={options[0]:None,options[1]:None}
     for j,v in trial:
       guess[j]=v
-    if None in guess.values():
-      for k,v in guess.items():
+    if None in list(guess.values()):
+      for k,v in list(guess.items()):
         if v==None:
           guess[k]=random.choice(self.values[k])
         

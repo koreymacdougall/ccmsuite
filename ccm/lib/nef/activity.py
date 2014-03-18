@@ -265,7 +265,7 @@ class ActivityNode(ArrayNode):
         warning=False
         if self.neurons>self.decoder_size_warning:
             warning=True
-            print 'Warning: calculating decoder for size %d neural group.  This may take a while.'%self.neurons
+            print('Warning: calculating decoder for size %d neural group.  This may take a while.'%self.neurons)
 
 
         upsilon=None
@@ -295,7 +295,7 @@ class ActivityNode(ArrayNode):
                 if not self.sample_generator.can_continue(self.dimensions):
                     s=count
                 if warning:
-                    print 'processing %d of %d samples (%d left)'%(s,self.sample_count,count)
+                    print('processing %d of %d samples (%d left)'%(s,self.sample_count,count))
                 samples=self.sample_generator.get(s)
                 count-=s
 
@@ -334,7 +334,7 @@ class ActivityNode(ArrayNode):
                     gamma+=numpy.identity(gamma.shape[0])*(((noise*self.saturation_range[1])**2)*self.sample_count)
         
             if warning:
-                print 'inverting %dx%d gamma matrix'%gamma.shape
+                print('inverting %dx%d gamma matrix'%gamma.shape)
                     
             w,v=numpy.linalg.eigh(gamma)
             limit=svd_limit*max(w)
@@ -394,7 +394,7 @@ class ActivityNode(ArrayNode):
         warning=False
         if self.neurons>self.decoder_size_warning:
             warning=True
-            print 'Warning: calculating decoder for size %d neural group.  This may take a while.'%self.neurons
+            print('Warning: calculating decoder for size %d neural group.  This may take a while.'%self.neurons)
 
 
         B=self.storage.get(name_B,(self.sample_count,-1))
@@ -412,7 +412,7 @@ class ActivityNode(ArrayNode):
                 if not self.sample_generator.can_continue(self.dimensions):
                     s=count
                 if warning:
-                    print 'processing %d of %d samples (%d left)'%(s,self.sample_count,count)
+                    print('processing %d of %d samples (%d left)'%(s,self.sample_count,count))
                 samples=self.sample_generator.get(s)
                 count-=s
 
@@ -439,7 +439,7 @@ class ActivityNode(ArrayNode):
                         B=numpy.vstack((B,samples))
         if need_A:
             if warning:
-                print 'inverting %dx%d activity matrix'%A.shape
+                print('inverting %dx%d activity matrix'%A.shape)
         
             Ainv=numpy.linalg.pinv(A,rcond=noise*0.1)
             self.storage.set(name_Ainv,Ainv)
@@ -467,15 +467,15 @@ def make_hash_info(obj):
     r=[]
     if hasattr(obj,'func_code'):
         r.append(obj.__name__)
-        r.append(obj.func_code)
-        r.append(obj.func_code.co_names)
-        for n in obj.func_code.co_names:
-            if n in obj.func_globals:
-                v=obj.func_globals[n]
+        r.append(obj.__code__)
+        r.append(obj.__code__.co_names)
+        for n in obj.__code__.co_names:
+            if n in obj.__globals__:
+                v=obj.__globals__[n]
                 r.append((n,tuple(make_hash_info(v))))
                 #print 'searching',n
         if hasattr(obj,'im_self'):
-            r.append(('im_self',tuple(make_hash_info(obj.im_self))))
+            r.append(('im_self',tuple(make_hash_info(obj.__self__))))
             #print 'searching im_self'
     else:
         if hasattr(obj,'__class__'):
