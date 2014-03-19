@@ -37,6 +37,7 @@ def log_everything(model,log=None):
   model.log=log
   for k,v in list(model.__dict__.items()):
     if k[0]!='_' and k!='parent':
+      
       if isinstance(v,Model) and v.parent is model:
         log_everything(v,getattr(log,k))
 
@@ -48,14 +49,14 @@ class Model:
     name='top'
     
     def __init__(self,log=None,**keys):
-        
+        #print("this happens")
+        print(self,"Model")
         self.__init_log=log
-        
         for k,v in list(keys.items()):
-          print(k,v)
           setattr(self,k,v)
     
     def __convert(self,parent=None,name=None):
+      #This is likely the CULPRIT
         #if self.__converted: return
         assert self.__converted==False
         self.__converted=True    

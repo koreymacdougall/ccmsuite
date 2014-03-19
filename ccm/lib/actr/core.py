@@ -7,7 +7,9 @@ class ACTR(ccm.ProductionSystem):
     production_threshold=None
     
     def __init__(self,log=None):
-        ccm.ProductionSystem.__init__(self,log=log)
+        #ccm.ProductionSystem.__init__(self,log=log)
+        print(self,"ACTR")
+        super(ACTR,self).__init__(log=log)
         self._adaptors=[]
     
     def _process_productions(self):
