@@ -56,7 +56,7 @@ class Model:
           setattr(self,k,v)
     
     def __convert(self,parent=None,name=None):
-      #This is likely the CULPRIT
+        #Culprit
         #if self.__converted: return
         assert self.__converted==False
         self.__converted=True    
@@ -67,9 +67,15 @@ class Model:
         methods={}
         objects={}
         for klass in inspect.getmro(self.__class__):
+          
+            #print(klass, "klass")
             if klass is not Model:
+                #print(klass, "klass")
                 for k,v in inspect.getmembers(klass):
+                    print(k,v,"k,v")
+                    
                     if k[0]!='_':
+                        #print(k,"just k")
                         if inspect.ismethod(v):
                             if k not in ['run','now','get_children'] and k not in methods and klass is not Model:
                                 methods[k]=v
@@ -79,6 +85,7 @@ class Model:
                             if k not in objects:
                                 objects[k]=v
         objects=copy.deepcopy(objects)
+        #works up to here
         
         if parent:
             if not parent.__converted: parent.__convert()
@@ -99,23 +106,37 @@ class Model:
             #if seed is not None: self.random.seed(seed)
             
             self.parent=None   
-
-        self._convert_info(objects,methods)    
-
+        
+        self._convert_info(objects,methods)
+        #works up to here
+        print(list(objects.items()))
         for name,obj in list(objects.items()):
+            #print("run before before",name,obj)
+            self.run(limit=0)#print(name,obj,"name,obj")
             if isinstance(obj,Model):
+                #print(dir(obj))  
                 if not obj.__converted:
+                    #print("run before")
+                    #self.run(limit=0)
                     obj.__convert(self,name)
+                    #print("run after")
+                    #self.run(limit=0)
                 else:
                     obj.name=name    
                 try:
                   self._children[name]=obj
                 except AttributeError:
-                  self._children={name:obj}  
+                  self._children={name:obj}
+            #print("run before",name,obj)
+            #self.run(limit=0)
+            #print(dir(obj))
             self.__dict__[name]=obj
-
-
-
+            #print("run after",name,obj)
+            #print(dir(obj))
+            self.run(limit=0)
+        #check out _convert_info - see difference between 2.7 running and 3.3 running.
+        #does not between here and last
+        
         if self._convert_methods:    
           for name,func in list(methods.items()):        
               if func.__func__.__code__.co_flags&0x20==0x20:
