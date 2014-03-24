@@ -7,11 +7,7 @@ log=ccm.log()
 class MyModel(ACTR):
     goal=Buffer()
 
-    def __init__(self):
-        super(MyModel,self).__init__(self)
 
-##    def __init__(self):
-##        ACTR.__init__(self)
         
     def greeting(goal='action:greet'):
         #print "Hello"
@@ -21,14 +17,14 @@ class MyModel(ACTR):
 #B = ACTR()
 #B.run()
 model=MyModel()
-x = dir(model)
-print(model,"model1")
+#x = dir(model)
+#print(model,"model1")
 
 ccm.log_everything(model)
-y = dir(model)
-print(len(x),len(y))
-print(set(y)-set(x))
-#model1.goal.set('action:greet')
+#y = dir(model)
+#print(len(x),len(y))
+#print(set(y)-set(x))
+model.goal.set('action:greet')
 model.run()
 
 

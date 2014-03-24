@@ -56,6 +56,7 @@ class Model:
           setattr(self,k,v)
     
     def __convert(self,parent=None,name=None):
+        print("__convert() called", self)
         #Culprit
         #if self.__converted: return
         assert self.__converted==False
@@ -66,9 +67,15 @@ class Model:
         
         methods={}
         objects={}
-        for klass in inspect.getmro(self.__class__):
+        print(inspect.getmro(self.__class__),"MRO")
+        #This MRO includes class object, whereas in 2.7, it does not
+        #add[:-1], because it seems that object is always at the end.
+        '''            obj.__convert(self,name)
+                    print("run after")'''#(from line 132) now works.
+        #BUT a later run crashes.
+        for klass in inspect.getmro(self.__class__)[:-1]:
           
-            #print(klass, "klass")
+            print(klass, "klass")
             if klass is not Model:
                 #print(klass, "klass")
                 for k,v in inspect.getmembers(klass):
@@ -76,8 +83,16 @@ class Model:
                     
                     if k[0]!='_':
                         #print(k,"just k")
-                        if inspect.ismethod(v):
+                        #A problem. ismethod(v) is not returning true.
+                        #Did run an exmample, and it worked fine.
+                        #It is working though, because they are unbound methods, and ismethod
+                        #should only return true if they are bound
+                        #isfunction might work in it's place
+                        #if inspect.ismethod(v):
+                        if inspect.isfunction(v):
+                            print(k,v,"k,v+")
                             if k not in ['run','now','get_children'] and k not in methods and klass is not Model:
+                                print(k,v,"k,v-post")
                                 methods[k]=v
                         else:
                             if inspect.isclass(v) and Model in inspect.getmro(v):
@@ -109,17 +124,22 @@ class Model:
         
         self._convert_info(objects,methods)
         #works up to here
-        print(list(objects.items()))
+        #print(list(objects.items()))
         for name,obj in list(objects.items()):
             #print("run before before",name,obj)
-            self.run(limit=0)#print(name,obj,"name,obj")
+            #self.run(limit=0)#print(name,obj,"name,obj")
             if isinstance(obj,Model):
                 #print(dir(obj))  
                 if not obj.__converted:
-                    #print("run before")
+                    print(obj,"obj")
+                    print(self,"self")
+                    print("run before")
+                    #self.run(limit=0)
+                    
                     #self.run(limit=0)
                     obj.__convert(self,name)
-                    #print("run after")
+                    print("run after")
+                    
                     #self.run(limit=0)
                 else:
                     obj.name=name    
@@ -127,19 +147,22 @@ class Model:
                   self._children[name]=obj
                 except AttributeError:
                   self._children={name:obj}
-            #print("run before",name,obj)
+            print("run before 2",name,obj)
             #self.run(limit=0)
             #print(dir(obj))
             self.__dict__[name]=obj
-            #print("run after",name,obj)
+            print("run after 2",name,obj)
             #print(dir(obj))
-            self.run(limit=0)
+            #self.run(limit=0)
         #check out _convert_info - see difference between 2.7 running and 3.3 running.
         #does not between here and last
         
         if self._convert_methods:    
-          for name,func in list(methods.items()):        
-              if func.__func__.__code__.co_flags&0x20==0x20:
+          for name,func in list(methods.items()):
+              print("here",name,func)
+              #print(dir(func))
+              #if func.__func__.__code__.co_flags&0x20==0x20:
+              if func.__code__.co_flags&0x20==0x20:
                   w=MethodGeneratorWrapper(self,func,name)
               else:
                   w=MethodWrapper(self,func,name)
